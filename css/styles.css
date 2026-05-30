@@ -1611,6 +1611,14 @@ body.is-loaded .cursor-label {
 @media (max-width: 600px) {
   .nav-links { display: none; }
   .hero { padding-top: 112px; min-height: auto; }
+  .hero-portrait-photo,
+  .hero-portrait-deco {
+    object-position: 24% top;
+  }
+  .hero-portrait-deco-wrap {
+    -webkit-mask-position: 24% top;
+    mask-position: 24% top;
+  }
   .shorts-grid {
     grid-template-columns: repeat(2, minmax(140px, 190px));
     gap: 18px;
