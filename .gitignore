@@ -1,0 +1,7 @@
+_*
+.commitmsg.txt
+_gitcommitmsg.tmp
+assets/_*
+scripts/_*
+assets/write-test.txt 
+scripts/write-test.txt 

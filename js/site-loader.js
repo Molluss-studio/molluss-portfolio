@@ -1,14 +1,28 @@
 (function () {
   const loader = document.getElementById('site-loader');
 
+  function waitFonts() {
+    if (typeof window.whenSiteFontsReady === 'function') {
+      return window.whenSiteFontsReady();
+    }
+    if (document.fonts && document.fonts.ready) {
+      return document.fonts.ready;
+    }
+    return Promise.resolve();
+  }
+
+  function revealPage() {
+    document.body.classList.remove('is-loading');
+    document.body.classList.add('is-loaded');
+    document.dispatchEvent(new CustomEvent('site:loaded'));
+  }
+
   function skipLoader() {
     if (typeof window.releaseTopoPaths === 'function') {
       window.releaseTopoPaths();
     }
     loader?.remove();
-    document.body.classList.remove('is-loading');
-    document.body.classList.add('is-loaded');
-    document.dispatchEvent(new CustomEvent('site:loaded'));
+    waitFonts().then(revealPage);
   }
 
   if (!window.__showSiteLoader) {
@@ -92,21 +106,24 @@
 
     loader.classList.add('is-exiting');
 
-    window.setTimeout(() => {
-      document.body.classList.remove('is-loading');
-      document.body.classList.add('is-loaded');
-      loader.classList.add('is-done');
-      loader.setAttribute('aria-hidden', 'true');
-
+    waitFonts().then(() => {
       window.setTimeout(() => {
-        document.dispatchEvent(new CustomEvent('site:loaded'));
-      }, revealDelay);
+        document.body.classList.remove('is-loading');
+        document.body.classList.add('is-loaded');
+        loader.classList.add('is-done');
+        loader.setAttribute('aria-hidden', 'true');
 
-    window.setTimeout(() => loader.remove(), removeDelay);
-    try {
-      sessionStorage.setItem('molluss:loader-done', '1');
-    } catch (err) {}
-  }, exitDelay);
+        window.setTimeout(() => {
+          document.dispatchEvent(new CustomEvent('site:loaded'));
+        }, revealDelay);
+
+        window.setTimeout(() => loader.remove(), removeDelay);
+
+        try {
+          sessionStorage.setItem('molluss:loader-done', '1');
+        } catch (err) {}
+      }, exitDelay);
+    });
   }
 
   function tick(now) {
