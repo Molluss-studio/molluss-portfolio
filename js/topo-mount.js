@@ -21,9 +21,13 @@
       }
 
       target.innerHTML = source.innerHTML;
+      if (typeof window.maskTopoPaths === 'function') {
+        window.maskTopoPaths(target);
+      }
       document.dispatchEvent(new CustomEvent('topo:ready', { detail: { host } }));
     })
     .catch((err) => {
       console.warn('Topographic background failed to load:', err);
+      document.dispatchEvent(new CustomEvent('topo:ready', { detail: { host, error: err } }));
     });
 })();

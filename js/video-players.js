@@ -39,7 +39,6 @@
     button.addEventListener('click', () => {
       const id = button.dataset.youtubeId;
       const container = button.closest('.video-block-inner, .short-player');
-      const card = button.closest('[data-cursor]');
       const title = button.getAttribute('aria-label') || 'Vidéo YouTube';
 
       if (!id || !container || container.classList.contains('is-playing')) return;
@@ -47,7 +46,7 @@
       container.classList.add('video-embed', 'is-playing');
       container.replaceChildren(createYoutubeIframe(id, title));
 
-      if (card) card.removeAttribute('data-cursor');
+      button.removeAttribute('data-cursor');
     });
   });
 })();

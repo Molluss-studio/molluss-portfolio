@@ -9,8 +9,23 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+  <script src="js/topo-mask.js"></script>
+  <script src="js/loader-gate.js"></script>
 </head>
 <body>
+  <script>document.body.className = window.__showSiteLoader ? 'is-loading' : 'is-loaded';</script>
+  <div id="site-loader" class="site-loader" role="status" aria-live="polite" aria-label="Chargement du site">
+    <div class="site-loader-inner">
+      <div class="loader-frame" aria-hidden="true">
+        <p class="loader-percent" aria-hidden="true"></p>
+        <span class="loader-corner loader-corner-tl"></span>
+        <span class="loader-corner loader-corner-tr"></span>
+        <span class="loader-corner loader-corner-bl"></span>
+        <span class="loader-corner loader-corner-br"></span>
+      </div>
+    </div>
+  </div>
+
   <div class="cursor-dot" aria-hidden="true"></div>
   <div class="cursor-ring" aria-hidden="true"></div>
   <div class="cursor-label" aria-hidden="true"></div>
@@ -23,7 +38,7 @@
     <a href="#" class="nav-logo">Molluss Studio</a>
     <ul class="nav-links">
       <li><a href="#video">Vidéo</a></li>
-      <li><a href="#temoignages">Témoignage</a></li>
+      <li><a href="#temoignages">Clients</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
   </nav>
@@ -89,7 +104,7 @@
             </li>
             <li class="studio-deco-item">
               <strong>Workflow</strong>
-              <span>Premiere · DaVinci</span>
+              <span>DaVinci · Fusion</span>
             </li>
             <li class="studio-deco-item">
               <strong>Disponible</strong>
@@ -134,10 +149,10 @@
       <h2 class="section-title reveal">Format horizontal</h2>
 
       <div class="grid-12 showreel-grid">
-        <article class="video-block span-4 reveal" data-cursor="Play">
+        <article class="video-block span-4 reveal">
           <div class="video-block-inner">
             <span class="video-frame-border" aria-hidden="true"></span>
-            <button type="button" class="video-placeholder" data-youtube-id="dIZ4PxEf9pM" data-duration="619" aria-label="Lire Best-of">
+            <button type="button" class="video-placeholder" data-cursor="Play" data-youtube-id="dIZ4PxEf9pM" data-duration="619" aria-label="Lire Best-of">
               <img class="video-thumb" src="https://img.youtube.com/vi/dIZ4PxEf9pM/hqdefault.jpg" alt="" loading="lazy" width="480" height="360">
               <span class="video-block-icon" aria-hidden="true">▶</span>
               <span class="video-block-meta" data-duration-display>10:19</span>
@@ -149,10 +164,10 @@
             </div>
           </div>
         </article>
-        <article class="video-block span-4 reveal" data-cursor="Play">
+        <article class="video-block span-4 reveal">
           <div class="video-block-inner">
             <span class="video-frame-border" aria-hidden="true"></span>
-            <button type="button" class="video-placeholder" data-youtube-id="EwYOvbpQ1Dc" data-duration="785" aria-label="Lire Best-of">
+            <button type="button" class="video-placeholder" data-cursor="Play" data-youtube-id="EwYOvbpQ1Dc" data-duration="785" aria-label="Lire Best-of">
               <img class="video-thumb" src="https://img.youtube.com/vi/EwYOvbpQ1Dc/hqdefault.jpg" alt="" loading="lazy" width="480" height="360">
               <span class="video-block-icon" aria-hidden="true">▶</span>
               <span class="video-block-meta" data-duration-display>13:05</span>
@@ -164,10 +179,10 @@
             </div>
           </div>
         </article>
-        <article class="video-block span-4 reveal" data-cursor="Play">
+        <article class="video-block span-4 reveal">
           <div class="video-block-inner">
             <span class="video-frame-border" aria-hidden="true"></span>
-            <button type="button" class="video-placeholder" data-youtube-id="hrR282L6WXY" data-duration="1583" aria-label="Lire Best-of">
+            <button type="button" class="video-placeholder" data-cursor="Play" data-youtube-id="hrR282L6WXY" data-duration="1583" aria-label="Lire Best-of">
               <img class="video-thumb" src="https://img.youtube.com/vi/hrR282L6WXY/hqdefault.jpg" alt="" loading="lazy" width="480" height="360">
               <span class="video-block-icon" aria-hidden="true">▶</span>
               <span class="video-block-meta" data-duration-display>26:23</span>
@@ -183,10 +198,10 @@
 
       <h2 class="section-title section-title-follow reveal">Format vertical</h2>
       <div class="shorts-grid">
-        <article class="short-card reveal" data-cursor="Play">
+        <article class="short-card reveal">
           <div class="short-player">
             <span class="video-frame-border" aria-hidden="true"></span>
-            <button type="button" class="video-placeholder" data-youtube-id="JeUGLgsB_4I" data-duration="53" aria-label="Lire Short">
+            <button type="button" class="video-placeholder" data-cursor="Play" data-youtube-id="JeUGLgsB_4I" data-duration="53" aria-label="Lire Short">
               <img class="video-thumb" src="https://img.youtube.com/vi/JeUGLgsB_4I/hqdefault.jpg" alt="" loading="lazy" width="480" height="360">
               <span class="short-player-icon" aria-hidden="true">▶</span>
               <span class="short-player-meta" data-duration-display>0:53</span>
@@ -198,10 +213,10 @@
             </div>
           </div>
         </article>
-        <article class="short-card reveal" data-cursor="Play">
+        <article class="short-card reveal">
           <div class="short-player">
             <span class="video-frame-border" aria-hidden="true"></span>
-            <button type="button" class="video-placeholder" data-youtube-id="sPP1mDQAt98" data-duration="56" aria-label="Lire Short">
+            <button type="button" class="video-placeholder" data-cursor="Play" data-youtube-id="sPP1mDQAt98" data-duration="56" aria-label="Lire Short">
               <img class="video-thumb" src="https://img.youtube.com/vi/sPP1mDQAt98/hqdefault.jpg" alt="" loading="lazy" width="480" height="360">
               <span class="short-player-icon" aria-hidden="true">▶</span>
               <span class="short-player-meta" data-duration-display>0:56</span>
@@ -213,10 +228,10 @@
             </div>
           </div>
         </article>
-        <article class="short-card reveal" data-cursor="Play">
+        <article class="short-card reveal">
           <div class="short-player">
             <span class="video-frame-border" aria-hidden="true"></span>
-            <button type="button" class="video-placeholder" data-youtube-id="SQfznUzWcfU" data-duration="48" aria-label="Lire Short">
+            <button type="button" class="video-placeholder" data-cursor="Play" data-youtube-id="SQfznUzWcfU" data-duration="48" aria-label="Lire Short">
               <img class="video-thumb" src="https://img.youtube.com/vi/SQfznUzWcfU/hqdefault.jpg" alt="" loading="lazy" width="480" height="360">
               <span class="short-player-icon" aria-hidden="true">▶</span>
               <span class="short-player-meta" data-duration-display>0:48</span>
@@ -255,10 +270,9 @@
 
     <section id="temoignages" class="section">
       <div class="section-label reveal">
-        <span class="section-label-text">02 — Témoignages</span>
+        <span class="section-label-text">02 — Clients</span>
         <span class="section-label-line" aria-hidden="true"></span>
       </div>
-      <h2 class="section-title reveal">Ils m'ont fait confiance</h2>
 
       <div class="studio-layout section-studio-layout reveal">
         <aside class="studio-deco studio-deco-left" aria-hidden="true">
@@ -386,6 +400,7 @@
   </footer>
 
   <script src="js/topo-mount.js"></script>
+  <script src="js/site-loader.js"></script>
   <script src="js/topo-parallax.js"></script>
   <script src="js/main.js"></script>
   <script src="js/video-players.js"></script>
