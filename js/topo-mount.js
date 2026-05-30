@@ -21,6 +21,7 @@
       }
 
       target.innerHTML = source.innerHTML;
+      document.dispatchEvent(new CustomEvent('topo:ready', { detail: { host } }));
     })
     .catch((err) => {
       console.warn('Topographic background failed to load:', err);
