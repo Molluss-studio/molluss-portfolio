@@ -152,7 +152,7 @@ body.is-loaded .cursor-label {
   position: relative;
   display: grid;
   place-items: center;
-  transition: opacity 480ms var(--ease-out), transform 480ms var(--ease-out);
+  transition: opacity 620ms var(--ease-out), transform 420ms var(--ease-out);
 }
 
 .site-loader.is-exiting .site-loader-inner {
@@ -163,7 +163,7 @@ body.is-loaded .cursor-label {
 .site-loader.is-done {
   opacity: 0;
   pointer-events: none;
-  transition: opacity 900ms var(--ease-out) 220ms;
+  transition: opacity 780ms var(--ease-out) 180ms;
 }
 
 .loader-frame {
