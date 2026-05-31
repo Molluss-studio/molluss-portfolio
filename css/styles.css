@@ -1313,6 +1313,10 @@ body.is-loaded .cursor-label {
   min-height: 760px;
 }
 
+.rdv-panel-mail {
+  margin-top: 20px;
+}
+
 .rdv-panel-meta,
 .studio-panel-meta {
   margin-top: 16px;
