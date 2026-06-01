@@ -2117,9 +2117,42 @@ body.cursor-over-embed .cursor-label {
     --margin-x: clamp(18px, 5.5vw, 26px);
   }
 
-  .nav-links { display: none; }
+  .nav {
+    height: auto;
+    min-height: 56px;
+    padding: 10px var(--margin-x);
+    align-items: center;
+    gap: 8px 10px;
+  }
+
+  .nav-logo {
+    font-size: clamp(10px, 2.8vw, 12px);
+    letter-spacing: 0.14em;
+    flex-shrink: 0;
+  }
+
+  .nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: clamp(10px, 2.8vw, 14px);
+    margin-left: auto;
+  }
+
+  .nav-links a {
+    font-size: clamp(8px, 2.2vw, 10px);
+    letter-spacing: 0.08em;
+    color: rgba(240, 237, 230, 0.62);
+    white-space: nowrap;
+  }
+
+  .nav-links a:hover,
+  .nav-links a:focus-visible {
+    color: var(--white);
+  }
+
   .hero {
-    padding-top: 112px;
+    padding-top: clamp(100px, 24vw, 118px);
     padding-bottom: 40px;
     min-height: auto;
   }
