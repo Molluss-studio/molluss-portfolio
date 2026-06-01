@@ -1243,6 +1243,11 @@ body.is-loaded .hero-portrait-border::before {
   letter-spacing: 0.14em;
 }
 
+.studio-deco-item span,
+.rdv-deco-item span {
+  color: rgba(240, 237, 230, 0.68);
+}
+
 .rdv-deco-note,
 .rdv-deco-mail,
 .studio-deco-note,
@@ -2050,7 +2055,7 @@ body.cursor-over-embed .cursor-label {
     font-size: clamp(0.5rem, 2.15vw, 0.625rem);
     letter-spacing: 0.09em;
     padding: 0;
-    color: rgba(240, 237, 230, 0.42);
+    color: rgba(240, 237, 230, 0.55);
     align-items: center;
     width: 100%;
   }
@@ -2090,9 +2095,10 @@ body.cursor-over-embed .cursor-label {
     color: rgba(200, 185, 122, 0.75);
   }
 
-  .studio-deco-item span {
+  .studio-deco-item span,
+  .rdv-deco-item span {
     overflow-wrap: anywhere;
-    color: rgba(240, 237, 230, 0.38);
+    color: rgba(240, 237, 230, 0.62);
   }
 
   .section-title {
