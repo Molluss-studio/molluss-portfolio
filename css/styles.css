@@ -80,8 +80,8 @@ body.is-loading {
 .page,
 .footer {
   transition:
-    opacity 900ms var(--ease-out),
-    transform 900ms var(--ease-out);
+    opacity 700ms var(--ease-out),
+    transform 700ms var(--ease-out);
 }
 
 body.is-loading .nav,
@@ -115,15 +115,15 @@ body.is-loaded .footer {
 }
 
 body.is-loaded .nav {
-  transition-delay: 240ms;
+  transition-delay: 140ms;
 }
 
 body.is-loaded .page {
-  transition-delay: 360ms;
+  transition-delay: 220ms;
 }
 
 body.is-loaded .footer {
-  transition-delay: 560ms;
+  transition-delay: 380ms;
 }
 
 body.is-loaded .cursor-dot,
@@ -145,14 +145,14 @@ body.is-loaded .cursor-label {
   place-items: center;
   pointer-events: all;
   background: transparent;
-  transition: opacity 700ms var(--ease-out);
+  transition: opacity 520ms var(--ease-out);
 }
 
 .site-loader-inner {
   position: relative;
   display: grid;
   place-items: center;
-  transition: opacity 620ms var(--ease-out), transform 420ms var(--ease-out);
+  transition: opacity 480ms var(--ease-out), transform 380ms var(--ease-out);
 }
 
 .site-loader.is-exiting .site-loader-inner {
@@ -163,7 +163,7 @@ body.is-loaded .cursor-label {
 .site-loader.is-done {
   opacity: 0;
   pointer-events: none;
-  transition: opacity 780ms var(--ease-out) 180ms;
+  transition: opacity 560ms var(--ease-out) 120ms;
 }
 
 .loader-frame {
@@ -375,7 +375,7 @@ body.is-loading .hero-portrait-border::before {
 
 body.is-loaded .hero-portrait-border::before {
   opacity: 1;
-  transition: opacity 600ms var(--ease-out) 200ms;
+  transition: opacity 480ms var(--ease-out) 120ms;
 }
 
 .hero-portrait-border::before,
