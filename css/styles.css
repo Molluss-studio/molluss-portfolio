@@ -735,12 +735,8 @@ body.is-loaded .hero-portrait-border::before {
 }
 
 .video-block-inner.is-playing {
-  padding: 0;
-  border: 1px solid var(--border);
-}
-
-.video-block-inner.is-playing .video-frame-border {
-  display: none;
+  padding: var(--frame);
+  border: none;
 }
 
 .video-block-inner::after {
@@ -899,12 +895,8 @@ body.is-loaded .hero-portrait-border::before {
 }
 
 .short-player.is-playing {
-  padding: 0;
-  border: 1px solid var(--border);
-}
-
-.short-player.is-playing .video-frame-border {
-  display: none;
+  padding: var(--frame);
+  border: none;
 }
 
 .video-block-inner.is-playing::after,
@@ -1544,6 +1536,13 @@ body.is-loaded .hero-portrait-border::before {
   z-index: 9999;
   top: 0;
   left: 0;
+  transition: opacity 150ms ease-out;
+}
+
+body.cursor-over-embed .cursor-dot,
+body.cursor-over-embed .cursor-ring,
+body.cursor-over-embed .cursor-label {
+  opacity: 0;
 }
 
 .cursor-dot {

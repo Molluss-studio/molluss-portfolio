@@ -44,8 +44,7 @@
       if (!id || !container || container.classList.contains('is-playing')) return;
 
       container.classList.add('video-embed', 'is-playing');
-      container.replaceChildren(createYoutubeIframe(id, title));
-
+      button.replaceWith(createYoutubeIframe(id, title));
       button.removeAttribute('data-cursor');
     });
   });
