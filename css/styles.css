@@ -367,6 +367,16 @@ body.is-loaded .cursor-label {
   mask-composite: exclude;
 }
 
+body.is-loading .hero-portrait-border::before {
+  opacity: 0;
+  animation-play-state: paused;
+}
+
+body.is-loaded .hero-portrait-border::before {
+  opacity: 1;
+  transition: opacity 600ms var(--ease-out) 200ms;
+}
+
 .hero-portrait-border::before,
 .video-frame-border::before {
   content: '';
@@ -905,6 +915,7 @@ body.is-loaded .cursor-label {
 .short-player-icon {
   font-family: var(--font-display);
   font-size: 36px;
+  line-height: 1;
   color: var(--border-strong);
   z-index: 1;
   transition: color 300ms ease-out, transform 300ms ease-out;
@@ -917,9 +928,6 @@ body.is-loaded .cursor-label {
 }
 
 .short-player-meta {
-  position: absolute;
-  left: 12px;
-  bottom: 12px;
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.1em;

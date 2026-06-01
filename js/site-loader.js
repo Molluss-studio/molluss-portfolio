@@ -108,12 +108,12 @@
 
     waitFonts().then(() => {
       window.setTimeout(() => {
-        document.body.classList.remove('is-loading');
-        document.body.classList.add('is-loaded');
         loader.classList.add('is-done');
         loader.setAttribute('aria-hidden', 'true');
 
         window.setTimeout(() => {
+          document.body.classList.remove('is-loading');
+          document.body.classList.add('is-loaded');
           document.dispatchEvent(new CustomEvent('site:loaded'));
         }, revealDelay);
 
