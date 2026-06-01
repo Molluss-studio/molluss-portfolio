@@ -1333,12 +1333,19 @@ body.is-loaded .hero-portrait-border::before {
   position: relative;
   z-index: 1;
   background: var(--black-3);
-  overflow: hidden;
+  overflow: visible;
 }
 
 .rdv-calendly .calendly-inline-widget {
   width: 100%;
-  min-height: 760px;
+  min-width: 0;
+  min-height: 700px;
+  height: auto;
+}
+
+.rdv-calendly .calendly-inline-widget iframe {
+  width: 100% !important;
+  min-width: 0 !important;
 }
 
 .rdv-panel-mail {
@@ -1571,6 +1578,60 @@ body.is-loaded .hero-portrait-border::before {
   .rdv-panel-frame,
   .studio-panel-frame {
     padding: 14px;
+  }
+}
+
+@media (max-width: 900px) {
+  .page-rdv {
+    padding-top: clamp(92px, 22vw, 112px);
+    padding-bottom: 28px;
+  }
+
+  .rdv-header {
+    margin-bottom: 24px;
+  }
+
+  .rdv-header .section-title {
+    font-size: clamp(1.35rem, 6vw, 2rem);
+  }
+
+  .rdv-desc {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .rdv-layout {
+    gap: 0;
+  }
+
+  .rdv-panel-frame {
+    padding: 12px;
+  }
+
+  .rdv-shell {
+    overflow: visible;
+  }
+
+  .rdv-calendly {
+    overflow: visible;
+  }
+
+  .rdv-calendly .calendly-inline-widget {
+    min-height: 980px;
+  }
+
+  .rdv-panel-mail {
+    margin-top: 16px;
+  }
+
+  .page-rdv .legal-back {
+    margin-top: 24px;
+  }
+}
+
+@media (max-width: 600px) {
+  .rdv-calendly .calendly-inline-widget {
+    min-height: 1050px;
   }
 }
 
