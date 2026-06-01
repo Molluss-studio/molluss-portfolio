@@ -1826,52 +1826,76 @@ body.cursor-over-embed .cursor-label {
     overflow-x: clip;
   }
 
-  /* Téléphone / petit écran : comme localhost — colonne, portrait en haut à gauche, 4:5 */
+  /* Téléphone : texte à gauche, portrait carré à droite */
   .hero-grid {
-    grid-template-columns: 1fr;
-    gap: clamp(20px, 5vw, 28px);
-    align-items: start;
+    grid-template-columns: minmax(0, 1fr) min(200px, 48vw);
+    gap: clamp(10px, 2.5vw, 16px);
+    align-items: center;
   }
 
   .hero-portrait {
-    order: -1;
-    justify-self: start;
-    width: min(220px, 58vw);
-    max-width: 220px;
+    order: 2;
+    justify-self: end;
+    width: min(200px, 48vw);
+    max-width: 200px;
+    min-width: 0;
+    aspect-ratio: 1 / 1;
     margin: 0;
-    aspect-ratio: auto;
-    container-type: inline-size;
+    container-type: normal;
   }
 
   .hero-content {
-    order: 0;
-    width: 100%;
+    order: 1;
     min-width: 0;
+    width: auto;
+    padding-top: 0;
+    position: relative;
+    z-index: 1;
   }
 
   .hero-portrait-stack,
   .hero-portrait-shell {
-    width: 100%;
+    width: auto;
     max-width: 100%;
+    height: auto;
+    overflow: visible;
   }
 
   .hero-portrait-inner {
-    aspect-ratio: 4 / 5 !important;
+    aspect-ratio: 1 / 1 !important;
     width: 100%;
     height: auto;
+    overflow: visible;
+    padding-bottom: 0;
   }
 
   .hero-portrait-photo,
   .hero-portrait-deco {
-    aspect-ratio: 4 / 5 !important;
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1 !important;
     object-fit: cover;
-    object-position: center top;
+    object-position: 22% top;
+  }
+
+  .hero-portrait-deco-wrap {
+    -webkit-mask-position: center top;
+    mask-position: center top;
+  }
+
+  .hero-portrait-pseudo {
+    font-size: clamp(10px, 9cqi, 14px);
+    left: clamp(6px, 3cqi, 10px);
+    bottom: clamp(4px, 2.5cqi, 8px);
+    max-width: calc(100% - 12px);
+    white-space: nowrap;
   }
 
   .hero-title {
-    font-size: clamp(40px, 11vw, 56px);
+    font-size: clamp(36px, 10vw, 52px);
     line-height: 0.92;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
   }
 
   .hero-content .btn-primary {
@@ -1977,19 +2001,20 @@ body.cursor-over-embed .cursor-label {
     letter-spacing: 0.1em;
   }
 
+  .hero-grid {
+    grid-template-columns: minmax(0, 1fr) min(190px, 46vw);
+    gap: 10px;
+  }
+
   .hero-portrait {
-    width: min(200px, 54vw);
-    max-width: 200px;
+    width: min(190px, 46vw);
+    max-width: 190px;
+    justify-self: end;
   }
 
   .hero-portrait-photo,
   .hero-portrait-deco {
-    object-position: 24% top;
-  }
-
-  .hero-portrait-deco-wrap {
-    -webkit-mask-position: 24% top;
-    mask-position: 24% top;
+    object-position: 22% top;
   }
 
   .section-title {
