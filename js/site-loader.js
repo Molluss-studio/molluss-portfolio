@@ -35,7 +35,12 @@
     return;
   }
 
-  if (!loader) return;
+  if (!loader) {
+    if (document.body.classList.contains('is-loading')) {
+      revealPage();
+    }
+    return;
+  }
 
   const percentEl = loader.querySelector('.loader-percent');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -166,4 +171,13 @@
   window.setTimeout(() => {
     if (!started) onTopoReady();
   }, 3600);
+
+  window.setTimeout(() => {
+    if (!document.body.classList.contains('is-loading')) return;
+    if (typeof window.releaseTopoPaths === 'function') {
+      window.releaseTopoPaths();
+    }
+    loader?.remove();
+    revealPage();
+  }, 10000);
 })();
