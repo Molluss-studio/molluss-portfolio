@@ -1826,10 +1826,19 @@ body.cursor-over-embed .cursor-label {
     overflow-x: clip;
   }
 
-  /* Téléphone : texte à gauche, portrait carré à droite (colonnes fixes pour éviter le chevauchement) */
+  .studio-layout.hero-layout,
+  .studio-layout.section-studio-layout {
+    gap: clamp(20px, 5vw, 28px);
+  }
+
+  .hero-layout .studio-panel-frame {
+    padding: clamp(20px, 5vw, 28px);
+  }
+
+  /* Téléphone : texte à gauche, portrait carré à droite */
   .hero-grid {
-    grid-template-columns: minmax(0, 1fr) clamp(132px, 40vw, 176px);
-    column-gap: clamp(10px, 2.5vw, 14px);
+    grid-template-columns: minmax(0, 1fr) clamp(128px, 38vw, 168px);
+    column-gap: clamp(16px, 4.5vw, 22px);
     row-gap: 0;
     align-items: center;
     overflow: hidden;
@@ -1904,8 +1913,8 @@ body.cursor-over-embed .cursor-label {
 
   .hero-title {
     font-size: clamp(28px, 8.2vw, 40px);
-    line-height: 0.9;
-    margin-bottom: 14px;
+    line-height: 0.92;
+    margin-bottom: 18px;
     max-width: 100%;
   }
 
@@ -1913,18 +1922,23 @@ body.cursor-over-embed .cursor-label {
     overflow-wrap: anywhere;
   }
 
+  .hero-title span + span {
+    margin-top: 2px;
+  }
+
   .hero-role {
-    margin-bottom: 12px;
+    margin-bottom: 16px;
     font-size: clamp(9px, 2.4vw, 11px);
   }
 
   .hero-content .btn-primary {
-    padding: 9px 12px;
+    margin-top: 4px;
+    padding: 10px 14px;
     font-size: 9px;
     letter-spacing: 0.1em;
     white-space: normal;
     max-width: 100%;
-    line-height: 1.35;
+    line-height: 1.4;
   }
 
   .section-title {
@@ -1939,8 +1953,16 @@ body.cursor-over-embed .cursor-label {
 }
 
 @media (max-width: 600px) {
+  :root {
+    --margin-x: clamp(18px, 5.5vw, 26px);
+  }
+
   .nav-links { display: none; }
-  .hero { padding-top: 112px; min-height: auto; }
+  .hero {
+    padding-top: 112px;
+    padding-bottom: 40px;
+    min-height: auto;
+  }
 
   .footer {
     flex-direction: column;
@@ -1978,21 +2000,26 @@ body.cursor-over-embed .cursor-label {
     letter-spacing: 0.095em;
   }
 
+  .studio-layout.hero-layout,
+  .studio-layout.section-studio-layout {
+    gap: clamp(24px, 6.5vw, 36px);
+  }
+
   .studio-layout.hero-layout .studio-deco-list,
   .studio-layout.section-studio-layout .studio-deco-list {
-    gap: 14px;
+    gap: 20px;
   }
 
   .studio-layout.hero-layout .studio-deco-item,
   .studio-layout.section-studio-layout .studio-deco-item {
-    padding-left: 10px;
-    line-height: 1.44;
+    padding-left: 12px;
+    line-height: 1.5;
   }
 
   .studio-layout.hero-layout .studio-deco-item strong,
   .studio-layout.section-studio-layout .studio-deco-item strong {
     font-size: 10.5px;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
   }
 
   .studio-layout.hero-layout .studio-deco-note,
@@ -2003,33 +2030,34 @@ body.cursor-over-embed .cursor-label {
   }
 
   .hero-layout .studio-panel-frame {
-    padding: clamp(16px, 4vw, 24px);
+    padding: clamp(22px, 6vw, 30px);
   }
 
   .hero-title {
     font-size: clamp(24px, 7.5vw, 34px);
-    margin-bottom: 12px;
+    margin-bottom: 16px;
   }
 
   .hero-role {
-    margin-bottom: 10px;
+    margin-bottom: 14px;
     font-size: 9px;
     letter-spacing: 0.14em;
   }
 
   .hero-content .btn-primary {
-    padding: 8px 10px;
+    margin-top: 6px;
+    padding: 10px 12px;
     font-size: 8px;
     letter-spacing: 0.08em;
   }
 
   .hero-grid {
-    grid-template-columns: minmax(0, 1fr) clamp(120px, 38vw, 160px);
-    column-gap: 10px;
+    grid-template-columns: minmax(0, 1fr) clamp(112px, 36vw, 152px);
+    column-gap: clamp(14px, 4vw, 20px);
   }
 
   .hero-portrait {
-    max-width: 160px;
+    max-width: 152px;
     justify-self: end;
   }
 
@@ -2047,7 +2075,11 @@ body.cursor-over-embed .cursor-label {
   }
 
   .studio-layout.hero-layout {
-    padding-bottom: 8px;
+    padding-bottom: 12px;
+  }
+
+  .studio-layout.hero-layout > .studio-deco {
+    padding-top: 4px;
   }
   .showreel-grid {
     max-width: min(400px, 100%);
