@@ -153,6 +153,7 @@
     const id = button.dataset.youtubeId;
     const container = button.closest('.video-block-inner, .short-player');
     if (!id || !container || container.classList.contains('is-playing')) return;
+    if (activePreview && activePreview.button === button) return;
 
     const durationSec = Number(button.dataset.duration) || PREVIEW_MIN_DURATION;
     if (durationSec < 3) return;
@@ -167,7 +168,7 @@
     const mountId = `video-preview-${++previewUid}`;
     mount.id = mountId;
     layer.appendChild(mount);
-    container.insertBefore(layer, container.firstChild);
+    container.insertBefore(layer, button);
     container.classList.add('is-previewing');
 
     const preview = {
@@ -238,6 +239,11 @@
     };
 
     button.addEventListener('mouseenter', () => {
+      clearLeaveTimer();
+      startPreview(button);
+    });
+
+    container.addEventListener('mouseenter', () => {
       clearLeaveTimer();
       startPreview(button);
     });
