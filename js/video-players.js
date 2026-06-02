@@ -2,9 +2,10 @@
   const IFRAME_ALLOW =
     'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
 
-  const PREVIEW_SEGMENT_SEC = 5;
-  const PREVIEW_JUMP_MS = 4200;
+  const PREVIEW_SEGMENT_SEC = 7;
+  const PREVIEW_JUMP_MS = 7000;
   const PREVIEW_MIN_DURATION = 12;
+  const SHORT_MAX_DURATION = 60;
 
   const canHoverPreview = window.matchMedia(
     '(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)'
@@ -72,6 +73,13 @@
     });
 
     return youtubeApiPromise;
+  }
+
+  function isShortPreview(container, durationSec) {
+    return (
+      container.classList.contains('short-player') ||
+      durationSec <= SHORT_MAX_DURATION
+    );
   }
 
   function pickRandomStart(durationSec) {
@@ -158,6 +166,9 @@
     const durationSec = Number(button.dataset.duration) || PREVIEW_MIN_DURATION;
     if (durationSec < 3) return;
 
+    const isShort = isShortPreview(container, durationSec);
+    const startAt = isShort ? 0 : pickRandomStart(durationSec);
+
     stopActivePreview();
 
     const layer = document.createElement('div');
@@ -177,6 +188,8 @@
       layer,
       mountId,
       durationSec,
+      isShort,
+      startAt,
       player: null,
       jumpTimer: null,
     };
@@ -184,8 +197,6 @@
 
     loadYouTubeAPI().then(() => {
       if (activePreview !== preview || !document.getElementById(mountId)) return;
-
-      const startAt = pickRandomStart(durationSec);
 
       preview.player = new window.YT.Player(mountId, {
         videoId: id,
@@ -209,14 +220,18 @@
             if (activePreview !== preview) return;
             event.target.mute();
             event.target.playVideo();
-            if (durationSec >= PREVIEW_MIN_DURATION) {
+            if (!preview.isShort) {
               scheduleSegmentJump(preview);
             }
           },
           onStateChange: (event) => {
             if (activePreview !== preview) return;
             if (event.data === window.YT.PlayerState.ENDED) {
-              event.target.seekTo(pickRandomStart(durationSec), true);
+              if (preview.isShort) {
+                event.target.seekTo(preview.startAt, true);
+              } else {
+                event.target.seekTo(pickRandomStart(durationSec), true);
+              }
               event.target.playVideo();
             }
           },

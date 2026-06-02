@@ -565,8 +565,12 @@ body.is-loaded .hero-portrait-border::before {
   text-transform: uppercase;
 }
 
-.hero-title span {
+.hero-title > span {
   display: block;
+}
+
+.hero-title > span:first-child {
+  white-space: nowrap;
 }
 
 .hero-title .outline {
@@ -575,6 +579,11 @@ body.is-loaded .hero-portrait-border::before {
 }
 
 .hero-title .accent {
+  color: var(--accent);
+  display: inline;
+}
+
+.hero-portrait-pseudo .accent {
   color: var(--accent);
 }
 
