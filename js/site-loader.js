@@ -44,8 +44,8 @@
 
   const percentEl = loader.querySelector('.loader-percent');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const DURATION = reduceMotion ? 400 : 1500;
-  const HOLD_AT_100 = reduceMotion ? 60 : 120;
+  const DURATION = reduceMotion ? 400 : 1000;
+  const HOLD_AT_100 = reduceMotion ? 60 : 80;
 
   let animStart = null;
   let started = false;
@@ -105,9 +105,9 @@
       window.releaseTopoPaths();
     }
 
-    const exitDelay = reduceMotion ? 60 : 180;
-    const revealDelay = reduceMotion ? 80 : 200;
-    const removeDelay = reduceMotion ? 400 : 620;
+    const exitDelay = reduceMotion ? 60 : 120;
+    const revealDelay = reduceMotion ? 80 : 133;
+    const removeDelay = reduceMotion ? 400 : 413;
 
     loader.classList.add('is-exiting');
 
@@ -170,7 +170,7 @@
 
   window.setTimeout(() => {
     if (!started) onTopoReady();
-  }, 2200);
+  }, 1500);
 
   window.setTimeout(() => {
     if (!document.body.classList.contains('is-loading')) return;
