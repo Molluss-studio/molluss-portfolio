@@ -498,7 +498,12 @@ body.is-loaded .hero-portrait-border::before {
   text-transform: uppercase;
   color: var(--white);
   line-height: 1.05;
+  white-space: nowrap;
   text-shadow: 0 2px 24px rgba(0, 0, 0, 0.8);
+}
+
+.hero-portrait-pseudo .accent {
+  color: var(--accent);
 }
 
 .hero-portrait-inner::after {
@@ -569,21 +574,12 @@ body.is-loaded .hero-portrait-border::before {
   display: block;
 }
 
-.hero-title > span:first-child {
-  white-space: nowrap;
-}
-
 .hero-title .outline {
   color: transparent;
   -webkit-text-stroke: 1px var(--white-muted);
 }
 
 .hero-title .accent {
-  color: var(--accent);
-  display: inline;
-}
-
-.hero-portrait-pseudo .accent {
   color: var(--accent);
 }
 
@@ -2059,8 +2055,6 @@ body.cursor-over-embed .cursor-label {
     font-size: clamp(10px, 9cqi, 14px);
     left: clamp(6px, 3cqi, 10px);
     bottom: clamp(4px, 2.5cqi, 8px);
-    max-width: calc(100% - 12px);
-    white-space: nowrap;
   }
 
   .hero-portrait-photo,
@@ -2219,8 +2213,6 @@ body.cursor-over-embed .cursor-label {
     font-size: clamp(10px, 9cqi, 14px);
     left: clamp(6px, 3cqi, 10px);
     bottom: clamp(4px, 2.5cqi, 8px);
-    max-width: calc(100% - 12px);
-    white-space: nowrap;
   }
 
   /* Colonnes déco : alignées sur la largeur du cadre hero */
