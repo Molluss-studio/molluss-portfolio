@@ -1,31 +1,160 @@
 """Generate 1200x630 Open Graph / Twitter Card image for Molluss Studio."""
 
+from __future__ import annotations
+
+import math
+import re
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
+import requests
 from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "assets"
+SCRIPTS = ROOT / "scripts"
+FONT_CACHE = SCRIPTS / ".font-cache"
 OUT = ASSETS / "og-image.png"
 PROFILE = ASSETS / "profile.png"
+TOPO = ASSETS / "topo-pattern.svg"
 
 W, H = 1200, 630
 BG = (10, 10, 10)
-SURFACE = (20, 20, 20)
 WHITE = (240, 237, 230)
 ACCENT = (200, 185, 122)
 MUTED = (180, 176, 168)
+MUTED_LIGHT = (120, 132, 148)
+
+FONT_URLS = {
+    "BebasNeue-Regular.ttf": (
+        "https://github.com/google/fonts/raw/main/ofl/bebasneue/BebasNeue-Regular.ttf"
+    ),
+    "DMMono-Regular.ttf": (
+        "https://github.com/google/fonts/raw/main/ofl/dmmono/DMMono-Regular.ttf"
+    ),
+    "DMMono-Medium.ttf": (
+        "https://github.com/google/fonts/raw/main/ofl/dmmono/DMMono-Medium.ttf"
+    ),
+}
 
 
-def load_font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
-    candidates = [
-        Path(r"C:\Windows\Fonts\arialbd.ttf") if bold else Path(r"C:\Windows\Fonts\arial.ttf"),
-        Path(r"C:\Windows\Fonts\segoeuib.ttf") if bold else Path(r"C:\Windows\Fonts\segoeui.ttf"),
+def ensure_fonts() -> None:
+    FONT_CACHE.mkdir(parents=True, exist_ok=True)
+    for name, url in FONT_URLS.items():
+        target = FONT_CACHE / name
+        if target.exists() and target.stat().st_size > 0:
+            continue
+        response = requests.get(url, timeout=30)
+        response.raise_for_status()
+        target.write_bytes(response.content)
+
+
+def load_font(name: str, size: int) -> ImageFont.FreeTypeFont:
+    ensure_fonts()
+    return ImageFont.truetype(str(FONT_CACHE / name), size)
+
+
+def parse_rgba(value: str) -> tuple[int, int, int, int]:
+    match = re.match(r"rgba\((\d+),(\d+),(\d+),([\d.]+)\)", value.strip())
+    if not match:
+        return (*WHITE, 40)
+    r, g, b, a = match.groups()
+    return int(r), int(g), int(b), int(round(float(a) * 255))
+
+
+def tokenize_path(d: str) -> list[str | float]:
+    return [
+        float(token) if token not in {"M", "C", "Z", "m", "c", "z"} else token.upper()
+        for token in re.findall(r"[MCZmcz]|[-+]?(?:\d*\.\d+|\d+)(?:e[-+]?\d+)?", d)
     ]
-    for path in candidates:
-        if path.exists():
-            return ImageFont.truetype(str(path), size)
-    return ImageFont.load_default()
+
+
+def cubic_points(p0, p1, p2, p3, steps: int = 18) -> list[tuple[float, float]]:
+    points: list[tuple[float, float]] = []
+    for i in range(steps + 1):
+        t = i / steps
+        mt = 1 - t
+        x = (
+            mt**3 * p0[0]
+            + 3 * mt**2 * t * p1[0]
+            + 3 * mt * t**2 * p2[0]
+            + t**3 * p3[0]
+        )
+        y = (
+            mt**3 * p0[1]
+            + 3 * mt**2 * t * p1[1]
+            + 3 * mt * t**2 * p2[1]
+            + t**3 * p3[1]
+        )
+        points.append((x, y))
+    return points
+
+
+def path_to_points(d: str) -> list[tuple[float, float]]:
+    tokens = tokenize_path(d)
+    points: list[tuple[float, float]] = []
+    idx = 0
+    current = (0.0, 0.0)
+    start = (0.0, 0.0)
+
+    while idx < len(tokens):
+        cmd = tokens[idx]
+        idx += 1
+
+        if cmd == "M":
+            current = (tokens[idx], tokens[idx + 1])
+            idx += 2
+            start = current
+            points.append(current)
+        elif cmd == "C":
+            p1 = (tokens[idx], tokens[idx + 1])
+            p2 = (tokens[idx + 2], tokens[idx + 3])
+            p3 = (tokens[idx + 4], tokens[idx + 5])
+            idx += 6
+            segment = cubic_points(current, p1, p2, p3)
+            points.extend(segment[1:])
+            current = p3
+        elif cmd == "Z":
+            if points and current != start:
+                points.append(start)
+            current = start
+
+    return points
+
+
+def draw_topo_background(canvas: Image.Image) -> None:
+    if not TOPO.exists():
+        return
+
+    root = ET.parse(TOPO).getroot()
+    ns = {"svg": "http://www.w3.org/2000/svg"}
+    paths = root.findall(".//svg:path", ns) or root.findall(".//path")
+
+    src_size = 1000.0
+    scale = max(W / src_size, H / src_size)
+    scaled = int(math.ceil(src_size * scale))
+    offset_x = (W - scaled) // 2
+    offset_y = (H - scaled) // 2
+
+    overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(overlay)
+
+    for path in paths:
+        stroke = path.attrib.get("stroke", "rgba(240,237,230,0.15)")
+        stroke_width = float(path.attrib.get("stroke-width", "0.65"))
+        rgba = parse_rgba(stroke)
+        width = max(1, int(round(stroke_width * scale * 1.4)))
+        raw_points = path_to_points(path.attrib.get("d", ""))
+        if len(raw_points) < 2:
+            continue
+
+        mapped = [
+            (offset_x + x * scale, offset_y + y * scale)
+            for x, y in raw_points
+        ]
+        draw.line(mapped, fill=rgba, width=width, joint="curve")
+
+    canvas.paste(overlay, (0, 0), overlay)
 
 
 def cover_crop(img: Image.Image, tw: int, th: int) -> Image.Image:
@@ -46,37 +175,86 @@ def cover_crop(img: Image.Image, tw: int, th: int) -> Image.Image:
     return resized.crop((0, 0, tw, th))
 
 
+def draw_gradient_overlay(photo: Image.Image) -> None:
+    overlay = Image.new("RGBA", photo.size, (0, 0, 0, 0))
+    draw = ImageDraw.Draw(overlay)
+    width, height = photo.size
+    for y in range(height):
+        ratio = y / max(height - 1, 1)
+        if ratio < 0.4:
+            alpha = 0
+        elif ratio < 0.75:
+            alpha = int(191 * (ratio - 0.4) / 0.35)
+        else:
+            alpha = int(191 * (1 - (ratio - 0.75) / 0.25 * 0.8))
+        draw.line([(0, y), (width, y)], fill=(10, 10, 10, alpha))
+    photo.paste(overlay, (0, 0), overlay)
+
+
+def draw_portrait(canvas: Image.Image, x: int, y: int, width: int, height: int) -> None:
+    if not PROFILE.exists():
+        return
+
+    frame = 3
+    photo = Image.open(PROFILE).convert("RGB")
+    cropped = cover_crop(photo, width, height)
+    draw_gradient_overlay(cropped)
+
+    framed = Image.new("RGB", (width + frame * 2, height + frame * 2), ACCENT)
+    framed.paste(cropped, (frame, frame))
+    canvas.paste(framed, (x - frame, y - frame))
+
+    draw = ImageDraw.Draw(canvas)
+    pseudo_font = load_font("BebasNeue-Regular.ttf", 28)
+    pseudo_x = x + 14
+    pseudo_y = y + height - 42
+
+    for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1), (0, 2), (0, 3)]:
+        draw.text(
+            (pseudo_x + dx, pseudo_y + dy),
+            "Molluss / Adam",
+            fill=(0, 0, 0),
+            font=pseudo_font,
+        )
+
+    molluss_width = draw.textlength("Molluss ", font=pseudo_font)
+    draw.text((pseudo_x, pseudo_y), "Molluss ", fill=WHITE, font=pseudo_font)
+    draw.text((pseudo_x + molluss_width, pseudo_y), "/ Adam", fill=ACCENT, font=pseudo_font)
+
+
+def draw_left_text(canvas: Image.Image) -> None:
+    draw = ImageDraw.Draw(canvas)
+    text_x = 80
+
+    role_font = load_font("DMMono-Regular.ttf", 13)
+    title_font = load_font("BebasNeue-Regular.ttf", 96)
+    tags_font = load_font("DMMono-Medium.ttf", 18)
+    email_font = load_font("DMMono-Regular.ttf", 15)
+
+    draw.line([(text_x, 148), (text_x + 24, 148)], fill=MUTED_LIGHT, width=1)
+    draw.text((text_x + 36, 138), "MONTEUR VIDÉO FREELANCE", fill=MUTED, font=role_font)
+
+    draw.text((text_x, 188), "MOLLUSS", fill=WHITE, font=title_font)
+    draw.text((text_x, 278), "STUDIO", fill=ACCENT, font=title_font)
+    draw.text((text_x, 400), "BEST-OF • CLIP • SHORT", fill=MUTED, font=tags_font)
+    draw.text((text_x, H - 58), "[ STUDIO.MOLLUSS@GMAIL.COM ]", fill=ACCENT, font=email_font)
+
+
 def main() -> None:
     canvas = Image.new("RGB", (W, H), BG)
+    draw_topo_background(canvas)
+
+    portrait_w = 380
+    portrait_h = int(portrait_w * 5 / 4)
+    portrait_x = W - portrait_w - 80
+    portrait_y = (H - portrait_h) // 2
+
+    divider_x = portrait_x - 48
     draw = ImageDraw.Draw(canvas)
+    draw.line([(divider_x, 72), (divider_x, H - 72)], fill=(60, 60, 60), width=1)
 
-    portrait_w = 420
-    portrait_h = H - 80
-    portrait_x = 72
-    portrait_y = 40
-
-    if PROFILE.exists():
-        photo = Image.open(PROFILE).convert("RGB")
-        cropped = cover_crop(photo, portrait_w, portrait_h)
-        frame = Image.new("RGB", (portrait_w + 4, portrait_h + 4), ACCENT)
-        frame.paste(cropped, (2, 2))
-        canvas.paste(frame, (portrait_x - 2, portrait_y - 2))
-
-    text_x = portrait_x + portrait_w + 72
-    draw.line([(text_x - 36, 80), (text_x - 36, H - 80)], fill=(255, 255, 255, 20), width=1)
-
-    role_font = load_font(22)
-    draw.text((text_x, 150), "Monteur vidéo freelance", fill=MUTED, font=role_font)
-
-    title_font = load_font(96, bold=True)
-    draw.text((text_x, 195), "MOLLUSS", fill=WHITE, font=title_font)
-    draw.text((text_x, 285), "STUDIO", fill=ACCENT, font=title_font)
-
-    tag_font = load_font(20)
-    draw.text((text_x, 410), "Montage vidéo · Best-of · Clip · Short", fill=MUTED, font=tag_font)
-    draw.text((text_x, 448), "Horizontal · Vertical", fill=MUTED, font=tag_font)
-
-    draw.rectangle([(0, H - 6), (W, H)], fill=ACCENT)
+    draw_left_text(canvas)
+    draw_portrait(canvas, portrait_x, portrait_y, portrait_w, portrait_h)
 
     canvas.save(OUT, format="PNG", optimize=True)
     print(f"Saved {OUT} ({W}x{H})")
