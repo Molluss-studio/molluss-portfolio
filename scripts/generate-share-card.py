@@ -1,4 +1,4 @@
-"""Build the social share JPEG from the approved SHORT (2) artwork."""
+"""Build og-share.jpg for X / Open Graph (from SHORT (2) artwork)."""
 
 from __future__ import annotations
 
@@ -9,8 +9,10 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "assets"
 SOURCE = ASSETS / "SHORT (2).png"
-OUT = ASSETS / "partage-social.jpg"
+OUT = ASSETS / "og-share.jpg"
 SIZE = (1200, 630)
+# Bump when forcing X/Twitter to fetch a fresh image.
+CACHE_VERSION = 10
 
 
 def main() -> None:
@@ -22,7 +24,7 @@ def main() -> None:
         image = image.resize(SIZE, Image.Resampling.LANCZOS)
 
     image.save(OUT, format="JPEG", quality=90, optimize=True, progressive=True)
-    print(f"Saved {OUT} ({SIZE[0]}x{SIZE[1]}, {OUT.stat().st_size // 1024} KB)")
+    print(f"Saved {OUT} — use ?v={CACHE_VERSION} in HTML meta tags")
 
 
 if __name__ == "__main__":
