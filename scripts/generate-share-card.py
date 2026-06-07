@@ -14,8 +14,9 @@ ROOT = Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "assets"
 SCRIPTS = ROOT / "scripts"
 FONT_CACHE = SCRIPTS / ".font-cache"
-OUT_LANDSCAPE = ASSETS / "og-share-v7.jpg"
+OUT_LANDSCAPE = ASSETS / "og-share-banner.jpg"
 OUT_SQUARE = ASSETS / "og-square-v8.jpg"
+OUT_CARD = ASSETS / "og-share-card.jpg"
 PROFILE = ASSETS / "profile.png"
 TOPO = ASSETS / "topo-pattern.svg"
 
@@ -226,32 +227,33 @@ def draw_portrait(canvas: Image.Image, x: int, y: int, width: int, height: int) 
 
 
 def draw_branding_landscape(canvas: Image.Image) -> None:
-    """Place branding inside the center square crop (mobile preview safe zone)."""
+    """Landscape banner for summary_large_image (full-width card on X)."""
     draw = ImageDraw.Draw(canvas)
-    safe_left = (W - H) // 2
-    safe_right = safe_left + H
 
     role_font = load_font("DMMono-Regular.ttf", 13)
     title_font = load_font("BebasNeue-Regular.ttf", 88)
     tags_font = load_font("DMMono-Medium.ttf", 17)
     email_font = load_font("DMMono-Regular.ttf", 14)
 
-    portrait_w = 270
+    portrait_w = 260
     portrait_h = int(portrait_w * 5 / 4)
-    portrait_x = safe_right - portrait_w - 24
+    portrait_x = W - portrait_w - 100
     portrait_y = (H - portrait_h) // 2
+    text_x = 100
 
-    text_x = safe_left + 36
-    divider_x = portrait_x - 28
+    divider_x = portrait_x - 48
     draw.line([(divider_x, 72), (divider_x, H - 72)], fill=(60, 60, 60), width=1)
 
     draw.line([(text_x, 148), (text_x + 24, 148)], fill=MUTED_LIGHT, width=1)
     draw.text((text_x + 36, 138), "MONTEUR VIDÉO FREELANCE", fill=MUTED, font=role_font)
 
     draw.text((text_x, 182), "MOLLUSS", fill=WHITE, font=title_font)
-    draw.text((text_x, 262), "STUDIO", fill=ACCENT, font=title_font)
+    draw.text((text_x, 268), "STUDIO", fill=ACCENT, font=title_font)
     draw.text((text_x, 372), "BEST-OF • CLIP • SHORT", fill=MUTED, font=tags_font)
-    draw.text((text_x, H - 58), "[ STUDIO.MOLLUSS@GMAIL.COM ]", fill=ACCENT, font=email_font)
+
+    email = "[ STUDIO.MOLLUSS@GMAIL.COM ]"
+    email_w = int(draw.textlength(email, font=email_font))
+    draw.text(((W - email_w) // 2, H - 54), email, fill=ACCENT, font=email_font)
 
     draw_portrait(canvas, portrait_x, portrait_y, portrait_w, portrait_h)
 
@@ -297,6 +299,7 @@ def main() -> None:
     draw_topo_background(landscape)
     draw_branding_landscape(landscape)
     save_jpeg(OUT_LANDSCAPE, landscape)
+    save_jpeg(OUT_CARD, landscape)
 
     square = Image.new("RGB", (SQ, SQ), BG)
     draw_topo_background(square)
