@@ -1,4 +1,4 @@
-"""Build the X / Open Graph share image from the approved SHORT (2) artwork."""
+"""Build the social share JPEG from the approved SHORT (2) artwork."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "assets"
 SOURCE = ASSETS / "SHORT (2).png"
-OUT = ASSETS / "molluss-x-card.jpg"
+OUT = ASSETS / "partage-social.jpg"
 SIZE = (1200, 630)
 
 
