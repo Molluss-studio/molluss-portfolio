@@ -14,11 +14,13 @@ ROOT = Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "assets"
 SCRIPTS = ROOT / "scripts"
 FONT_CACHE = SCRIPTS / ".font-cache"
-OUT = ASSETS / "og-share-v7.jpg"
+OUT_LANDSCAPE = ASSETS / "og-share-v7.jpg"
+OUT_SQUARE = ASSETS / "og-square-v8.jpg"
 PROFILE = ASSETS / "profile.png"
 TOPO = ASSETS / "topo-pattern.svg"
 
 W, H = 1200, 630
+SQ = 1200
 BG = (10, 10, 10)
 WHITE = (240, 237, 230)
 ACCENT = (200, 185, 122)
@@ -126,17 +128,18 @@ def draw_topo_background(canvas: Image.Image) -> None:
     if not TOPO.exists():
         return
 
+    cw, ch = canvas.size
     root = ET.parse(TOPO).getroot()
     ns = {"svg": "http://www.w3.org/2000/svg"}
     paths = root.findall(".//svg:path", ns) or root.findall(".//path")
 
     src_size = 1000.0
-    scale = max(W / src_size, H / src_size)
+    scale = max(cw / src_size, ch / src_size)
     scaled = int(math.ceil(src_size * scale))
-    offset_x = (W - scaled) // 2
-    offset_y = (H - scaled) // 2
+    offset_x = (cw - scaled) // 2
+    offset_y = (ch - scaled) // 2
 
-    overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    overlay = Image.new("RGBA", (cw, ch), (0, 0, 0, 0))
     draw = ImageDraw.Draw(overlay)
 
     for path in paths:
@@ -222,7 +225,7 @@ def draw_portrait(canvas: Image.Image, x: int, y: int, width: int, height: int) 
     draw.text((pseudo_x + molluss_width, pseudo_y), "/ Adam", fill=ACCENT, font=pseudo_font)
 
 
-def draw_branding(canvas: Image.Image) -> None:
+def draw_branding_landscape(canvas: Image.Image) -> None:
     """Place branding inside the center square crop (mobile preview safe zone)."""
     draw = ImageDraw.Draw(canvas)
     safe_left = (W - H) // 2
@@ -253,12 +256,52 @@ def draw_branding(canvas: Image.Image) -> None:
     draw_portrait(canvas, portrait_x, portrait_y, portrait_w, portrait_h)
 
 
+def draw_branding_square(canvas: Image.Image) -> None:
+    """Square layout for X/mobile link previews (no crop)."""
+    draw = ImageDraw.Draw(canvas)
+    role_font = load_font("DMMono-Regular.ttf", 14)
+    title_font = load_font("BebasNeue-Regular.ttf", 108)
+    tags_font = load_font("DMMono-Medium.ttf", 20)
+    email_font = load_font("DMMono-Regular.ttf", 15)
+
+    role_w = draw.textlength("MONTEUR VIDÉO FREELANCE", font=role_font)
+    draw.text(((SQ - role_w) // 2, 96), "MONTEUR VIDÉO FREELANCE", fill=MUTED, font=role_font)
+
+    molluss_w = draw.textlength("MOLLUSS", font=title_font)
+    draw.text(((SQ - molluss_w) // 2, 150), "MOLLUSS", fill=WHITE, font=title_font)
+    studio_w = draw.textlength("STUDIO", font=title_font)
+    draw.text(((SQ - studio_w) // 2, 258), "STUDIO", fill=ACCENT, font=title_font)
+
+    tags = "BEST-OF • CLIP • SHORT"
+    tags_w = draw.textlength(tags, font=tags_font)
+    draw.text(((SQ - tags_w) // 2, 372), tags, fill=MUTED, font=tags_font)
+
+    portrait_w = 340
+    portrait_h = int(portrait_w * 5 / 4)
+    portrait_x = (SQ - portrait_w) // 2
+    portrait_y = 430
+    draw_portrait(canvas, portrait_x, portrait_y, portrait_w, portrait_h)
+
+    email = "[ STUDIO.MOLLUSS@GMAIL.COM ]"
+    email_w = draw.textlength(email, font=email_font)
+    draw.text(((SQ - email_w) // 2, SQ - 72), email, fill=ACCENT, font=email_font)
+
+
+def save_jpeg(path: Path, canvas: Image.Image) -> None:
+    canvas.save(path, format="JPEG", quality=88, optimize=True, progressive=True)
+    print(f"Saved {path} ({canvas.size[0]}x{canvas.size[1]}, {path.stat().st_size // 1024} KB)")
+
+
 def main() -> None:
-    canvas = Image.new("RGB", (W, H), BG)
-    draw_topo_background(canvas)
-    draw_branding(canvas)
-    canvas.save(OUT, format="JPEG", quality=88, optimize=True, progressive=True)
-    print(f"Saved {OUT} ({W}x{H}, {OUT.stat().st_size // 1024} KB)")
+    landscape = Image.new("RGB", (W, H), BG)
+    draw_topo_background(landscape)
+    draw_branding_landscape(landscape)
+    save_jpeg(OUT_LANDSCAPE, landscape)
+
+    square = Image.new("RGB", (SQ, SQ), BG)
+    draw_topo_background(square)
+    draw_branding_square(square)
+    save_jpeg(OUT_SQUARE, square)
 
 
 if __name__ == "__main__":
