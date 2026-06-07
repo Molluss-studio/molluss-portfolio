@@ -1,4 +1,4 @@
-"""Build og-share.jpg from assets/SHORT (2).png for social link previews."""
+"""Build molluss-og.jpg from assets/SHORT (2).png for social link previews."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE = ROOT / "assets" / "SHORT (2).png"
-OUT = ROOT / "assets" / "og-share.jpg"
+OUT = ROOT / "assets" / "molluss-og.jpg"
 SIZE = (1200, 630)
 
 
