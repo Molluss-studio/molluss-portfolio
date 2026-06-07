@@ -12,7 +12,7 @@ SOURCE = ASSETS / "SHORT (2).png"
 OUT = ASSETS / "og-share.jpg"
 SIZE = (1200, 630)
 # Bump when forcing X/Twitter to fetch a fresh image.
-CACHE_VERSION = 10
+CACHE_VERSION = 11
 
 
 def main() -> None:
