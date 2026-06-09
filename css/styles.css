@@ -2183,27 +2183,38 @@ body.cursor-over-embed .cursor-label {
   }
   .shorts-carousel-viewport {
     scroll-snap-type: x mandatory;
+    scroll-behavior: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
   }
 
   .shorts-carousel .short-card {
-    flex: 0 0 80%;
-    width: 80%;
-    max-width: 220px;
+    flex: 0 0 var(--short-card-width, 68%);
+    width: var(--short-card-width, 68%);
+    max-width: none;
+    scroll-snap-align: start;
     scroll-snap-stop: always;
+    transition: none;
   }
 
   .shorts-carousel .short-card.is-short-focused {
     z-index: 2;
     position: relative;
+    transform: scale(1);
+    opacity: 1;
+    filter: none;
   }
 
   .shorts-carousel .short-card.is-short-peek {
     z-index: 1;
     position: relative;
+    transform: scale(0.9);
+    opacity: 0.38;
+    filter: brightness(0.68);
   }
 
   .studio-panel-frame--content {
-    overflow-x: clip;
+    overflow-x: visible;
   }
 
   .studio-layout.hero-layout {
@@ -2503,12 +2514,6 @@ body.cursor-over-embed .cursor-label {
   .showreel-grid {
     max-width: min(400px, 100%);
   }
-  .shorts-carousel .short-card {
-    flex: 0 0 82%;
-    width: 82%;
-    max-width: 210px;
-  }
-
   .short-card:hover {
     transform: none;
   }
@@ -2517,11 +2522,6 @@ body.cursor-over-embed .cursor-label {
 @media (max-width: 380px) {
   .showreel-grid {
     max-width: min(300px, 100%);
-  }
-  .shorts-carousel .short-card {
-    flex: 0 0 84%;
-    width: 84%;
-    max-width: none;
   }
 
   .shorts-carousel-btn {

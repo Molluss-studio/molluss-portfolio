@@ -13,10 +13,24 @@
   const mobileCarousel = window.matchMedia('(max-width: 900px)');
 
   let scrollRaf = 0;
-  let snapTimer = 0;
+
+  function isMobile() {
+    return mobileCarousel.matches;
+  }
 
   function prefersReducedMotion() {
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  function syncCardMetrics() {
+    if (!isMobile()) {
+      carousel.style.removeProperty('--short-card-width');
+      return;
+    }
+
+    const peek = Math.round(Math.max(52, viewport.clientWidth * 0.26));
+    const width = Math.max(132, viewport.clientWidth - peek);
+    carousel.style.setProperty('--short-card-width', `${width}px`);
   }
 
   function getScrollStep() {
@@ -48,53 +62,21 @@
 
   function updateCardFocus() {
     const bounds = viewport.getBoundingClientRect();
-    const tolerance = 6;
-
-    if (mobileCarousel.matches) {
-      const activeIndex = getActiveIndex();
-
-      cards.forEach((card, index) => {
-        const rect = card.getBoundingClientRect();
-        const partiallyVisible = rect.right > bounds.left + 2 && rect.left < bounds.right - 2;
-        const isFocused = index === activeIndex;
-
-        card.classList.toggle('is-short-focused', isFocused);
-        card.classList.toggle('is-short-peek', partiallyVisible && !isFocused);
-      });
-      return;
-    }
 
     cards.forEach((card) => {
       const rect = card.getBoundingClientRect();
-      const fullyVisible =
-        rect.left >= bounds.left - tolerance && rect.right <= bounds.right + tolerance;
-      const partiallyVisible = rect.right > bounds.left && rect.left < bounds.right;
+      const visibleWidth = Math.min(rect.right, bounds.right) - Math.max(rect.left, bounds.left);
+      const ratio = rect.width > 0 ? visibleWidth / rect.width : 0;
+      const isFocused = ratio >= 0.88;
+      const isPeek = visibleWidth > 10 && !isFocused;
 
-      card.classList.toggle('is-short-focused', fullyVisible);
-      card.classList.toggle('is-short-peek', partiallyVisible && !fullyVisible);
+      card.classList.toggle('is-short-focused', isFocused);
+      card.classList.toggle('is-short-peek', isPeek);
     });
   }
 
-  function snapToNearestCard() {
-    const step = getScrollStep();
-    if (!step) return;
-
-    const maxScroll = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
-    const target = Math.min(getActiveIndex() * step, maxScroll);
-
-    if (Math.abs(viewport.scrollLeft - target) > 3) {
-      viewport.scrollTo({
-        left: target,
-        behavior: prefersReducedMotion() ? 'auto' : 'smooth',
-      });
-      return;
-    }
-
-    updateCardFocus();
-    updateButtons();
-  }
-
   function refreshCarousel() {
+    syncCardMetrics();
     updateButtons();
     updateCardFocus();
   }
@@ -106,15 +88,6 @@
       scrollRaf = 0;
       refreshCarousel();
     });
-  }
-
-  function scheduleSnap() {
-    if (snapTimer) window.clearTimeout(snapTimer);
-
-    snapTimer = window.setTimeout(() => {
-      snapTimer = 0;
-      snapToNearestCard();
-    }, 90);
   }
 
   function scrollToIndex(index) {
@@ -137,16 +110,9 @@
   prevBtn.addEventListener('click', () => scrollByCard(-1));
   nextBtn.addEventListener('click', () => scrollByCard(1));
 
-  viewport.addEventListener(
-    'scroll',
-    () => {
-      scheduleRefresh();
-      scheduleSnap();
-    },
-    { passive: true }
-  );
+  viewport.addEventListener('scroll', scheduleRefresh, { passive: true });
 
-  viewport.addEventListener('scrollend', snapToNearestCard, { passive: true });
+  viewport.addEventListener('scrollend', scheduleRefresh, { passive: true });
 
   viewport.addEventListener('keydown', (event) => {
     if (event.key === 'ArrowLeft') {
@@ -158,20 +124,11 @@
     }
   });
 
-  window.addEventListener('resize', () => {
-    scheduleRefresh();
-    scheduleSnap();
-  }, { passive: true });
+  window.addEventListener('resize', scheduleRefresh, { passive: true });
 
-  mobileCarousel.addEventListener('change', () => {
-    scheduleRefresh();
-    scheduleSnap();
-  });
+  mobileCarousel.addEventListener('change', scheduleRefresh);
 
-  window.addEventListener('load', () => {
-    refreshCarousel();
-    snapToNearestCard();
-  }, { passive: true });
+  window.addEventListener('load', refreshCarousel, { passive: true });
 
   refreshCarousel();
 })();
