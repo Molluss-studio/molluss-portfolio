@@ -902,13 +902,112 @@ body.is-loaded .hero-portrait-border::before {
   z-index: 1;
 }
 
-.shorts-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(170px, 250px));
-  gap: 28px;
-  justify-content: start;
+.shorts-carousel {
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 2vw, 16px);
   width: 100%;
   max-width: 100%;
+}
+
+.shorts-carousel-viewport {
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: visible;
+  scroll-snap-type: x proximity;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-block: 4px;
+}
+
+.shorts-carousel-viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.shorts-carousel-viewport:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent-dim);
+}
+
+.shorts-carousel-btn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  background: rgba(10, 10, 10, 0.88);
+  backdrop-filter: blur(10px);
+  color: var(--white-muted);
+  cursor: pointer;
+  transition:
+    color 200ms ease,
+    border-color 200ms ease,
+    background 200ms ease,
+    opacity 200ms ease;
+}
+
+.shorts-carousel-btn:hover:not(:disabled),
+.shorts-carousel-btn:focus-visible:not(:disabled) {
+  color: var(--accent);
+  border-color: rgba(200, 185, 122, 0.45);
+  background: rgba(20, 20, 20, 0.95);
+  outline: none;
+}
+
+.shorts-carousel-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.shorts-carousel-btn-icon {
+  display: block;
+}
+
+.shorts-grid {
+  display: flex;
+  gap: clamp(16px, 2.5vw, 28px);
+  width: max-content;
+  max-width: none;
+}
+
+.shorts-carousel .short-card {
+  flex: 0 0 clamp(150px, 22vw, 220px);
+  width: clamp(150px, 22vw, 220px);
+  scroll-snap-align: start;
+  transform: scale(0.9);
+  opacity: 0.4;
+  filter: brightness(0.72);
+  transform-origin: center center;
+  transition:
+    transform 420ms var(--ease-out),
+    opacity 420ms ease,
+    filter 420ms ease;
+}
+
+.shorts-carousel .short-card.is-short-focused {
+  transform: scale(1);
+  opacity: 1;
+  filter: none;
+}
+
+.shorts-carousel .short-card.is-short-peek {
+  transform: scale(0.9);
+  opacity: 0.4;
+  filter: brightness(0.72);
+}
+
+.shorts-carousel .short-card.is-short-focused:hover {
+  transform: translateY(-4px) scale(1);
+}
+
+.shorts-carousel .short-card.is-short-peek:hover {
+  transform: scale(0.9);
 }
 
 .short-card {
@@ -2082,13 +2181,9 @@ body.cursor-over-embed .cursor-label {
     max-width: min(520px, 100%);
     margin-inline: auto;
   }
-  .shorts-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: clamp(14px, 3vw, 22px);
-    justify-content: stretch;
-    width: 100%;
-    max-width: min(440px, 100%);
-    margin-inline: auto;
+  .shorts-carousel .short-card {
+    flex-basis: clamp(140px, 42vw, 200px);
+    width: clamp(140px, 42vw, 200px);
   }
 
   .studio-panel-frame--content {
@@ -2392,10 +2487,9 @@ body.cursor-over-embed .cursor-label {
   .showreel-grid {
     max-width: min(400px, 100%);
   }
-  .shorts-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: clamp(10px, 2.8vw, 16px);
-    max-width: min(320px, 100%);
+  .shorts-carousel .short-card {
+    flex-basis: clamp(130px, 44vw, 180px);
+    width: clamp(130px, 44vw, 180px);
   }
 
   .short-card:hover {
@@ -2407,10 +2501,14 @@ body.cursor-over-embed .cursor-label {
   .showreel-grid {
     max-width: min(300px, 100%);
   }
-  .shorts-grid {
-    grid-template-columns: minmax(0, 1fr);
-    max-width: 220px;
-    margin-inline: auto;
+  .shorts-carousel .short-card {
+    flex-basis: min(200px, 72vw);
+    width: min(200px, 72vw);
+  }
+
+  .shorts-carousel-btn {
+    width: 36px;
+    height: 36px;
   }
 }
 
