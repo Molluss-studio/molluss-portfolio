@@ -10,7 +10,10 @@
 
   if (!viewport || !track || !prevBtn || !nextBtn || !cards.length) return;
 
+  const mobileCarousel = window.matchMedia('(max-width: 900px)');
+
   let scrollRaf = 0;
+  let snapTimer = 0;
 
   function prefersReducedMotion() {
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -25,6 +28,18 @@
     return card.offsetWidth + gap;
   }
 
+  function getActiveIndex() {
+    const step = getScrollStep();
+    if (!step) return 0;
+
+    const maxScroll = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+    const index = Math.round(viewport.scrollLeft / step);
+    const maxIndex = cards.length - 1;
+
+    if (viewport.scrollLeft >= maxScroll - 2) return maxIndex;
+    return Math.min(maxIndex, Math.max(0, index));
+  }
+
   function updateButtons() {
     const maxScroll = viewport.scrollWidth - viewport.clientWidth;
     prevBtn.disabled = viewport.scrollLeft <= 2;
@@ -35,6 +50,20 @@
     const bounds = viewport.getBoundingClientRect();
     const tolerance = 6;
 
+    if (mobileCarousel.matches) {
+      const activeIndex = getActiveIndex();
+
+      cards.forEach((card, index) => {
+        const rect = card.getBoundingClientRect();
+        const partiallyVisible = rect.right > bounds.left + 2 && rect.left < bounds.right - 2;
+        const isFocused = index === activeIndex;
+
+        card.classList.toggle('is-short-focused', isFocused);
+        card.classList.toggle('is-short-peek', partiallyVisible && !isFocused);
+      });
+      return;
+    }
+
     cards.forEach((card) => {
       const rect = card.getBoundingClientRect();
       const fullyVisible =
@@ -44,6 +73,25 @@
       card.classList.toggle('is-short-focused', fullyVisible);
       card.classList.toggle('is-short-peek', partiallyVisible && !fullyVisible);
     });
+  }
+
+  function snapToNearestCard() {
+    const step = getScrollStep();
+    if (!step) return;
+
+    const maxScroll = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+    const target = Math.min(getActiveIndex() * step, maxScroll);
+
+    if (Math.abs(viewport.scrollLeft - target) > 3) {
+      viewport.scrollTo({
+        left: target,
+        behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+      });
+      return;
+    }
+
+    updateCardFocus();
+    updateButtons();
   }
 
   function refreshCarousel() {
@@ -60,20 +108,45 @@
     });
   }
 
-  function scrollByCard(direction) {
+  function scheduleSnap() {
+    if (snapTimer) window.clearTimeout(snapTimer);
+
+    snapTimer = window.setTimeout(() => {
+      snapTimer = 0;
+      snapToNearestCard();
+    }, 90);
+  }
+
+  function scrollToIndex(index) {
     const step = getScrollStep();
     if (!step) return;
 
-    viewport.scrollBy({
-      left: direction * step,
+    const maxScroll = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+    const target = Math.min(Math.max(0, index) * step, maxScroll);
+
+    viewport.scrollTo({
+      left: target,
       behavior: prefersReducedMotion() ? 'auto' : 'smooth',
     });
+  }
+
+  function scrollByCard(direction) {
+    scrollToIndex(getActiveIndex() + direction);
   }
 
   prevBtn.addEventListener('click', () => scrollByCard(-1));
   nextBtn.addEventListener('click', () => scrollByCard(1));
 
-  viewport.addEventListener('scroll', scheduleRefresh, { passive: true });
+  viewport.addEventListener(
+    'scroll',
+    () => {
+      scheduleRefresh();
+      scheduleSnap();
+    },
+    { passive: true }
+  );
+
+  viewport.addEventListener('scrollend', snapToNearestCard, { passive: true });
 
   viewport.addEventListener('keydown', (event) => {
     if (event.key === 'ArrowLeft') {
@@ -85,8 +158,20 @@
     }
   });
 
-  window.addEventListener('resize', scheduleRefresh, { passive: true });
-  window.addEventListener('load', refreshCarousel, { passive: true });
+  window.addEventListener('resize', () => {
+    scheduleRefresh();
+    scheduleSnap();
+  }, { passive: true });
+
+  mobileCarousel.addEventListener('change', () => {
+    scheduleRefresh();
+    scheduleSnap();
+  });
+
+  window.addEventListener('load', () => {
+    refreshCarousel();
+    snapToNearestCard();
+  }, { passive: true });
 
   refreshCarousel();
 })();

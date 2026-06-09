@@ -2181,9 +2181,25 @@ body.cursor-over-embed .cursor-label {
     max-width: min(520px, 100%);
     margin-inline: auto;
   }
+  .shorts-carousel-viewport {
+    scroll-snap-type: x mandatory;
+  }
+
   .shorts-carousel .short-card {
-    flex-basis: clamp(140px, 42vw, 200px);
-    width: clamp(140px, 42vw, 200px);
+    flex: 0 0 80%;
+    width: 80%;
+    max-width: 220px;
+    scroll-snap-stop: always;
+  }
+
+  .shorts-carousel .short-card.is-short-focused {
+    z-index: 2;
+    position: relative;
+  }
+
+  .shorts-carousel .short-card.is-short-peek {
+    z-index: 1;
+    position: relative;
   }
 
   .studio-panel-frame--content {
@@ -2488,8 +2504,9 @@ body.cursor-over-embed .cursor-label {
     max-width: min(400px, 100%);
   }
   .shorts-carousel .short-card {
-    flex-basis: clamp(130px, 44vw, 180px);
-    width: clamp(130px, 44vw, 180px);
+    flex: 0 0 82%;
+    width: 82%;
+    max-width: 210px;
   }
 
   .short-card:hover {
@@ -2502,8 +2519,9 @@ body.cursor-over-embed .cursor-label {
     max-width: min(300px, 100%);
   }
   .shorts-carousel .short-card {
-    flex-basis: min(200px, 72vw);
-    width: min(200px, 72vw);
+    flex: 0 0 84%;
+    width: 84%;
+    max-width: none;
   }
 
   .shorts-carousel-btn {
