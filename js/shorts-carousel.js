@@ -33,29 +33,34 @@
     carousel.style.setProperty('--short-card-width', `${width}px`);
   }
 
-  function getScrollStep() {
-    const card = cards[0];
+  function getCardScrollLeft(index) {
+    const card = cards[index];
     if (!card) return 0;
+    return Math.max(0, card.offsetLeft - track.offsetLeft);
+  }
 
-    const styles = getComputedStyle(track);
-    const gap = parseFloat(styles.columnGap || styles.gap) || 0;
-    return card.offsetWidth + gap;
+  function getMaxScroll() {
+    return Math.max(0, viewport.scrollWidth - viewport.clientWidth);
   }
 
   function getActiveIndex() {
-    const step = getScrollStep();
-    if (!step) return 0;
+    const scrollLeft = viewport.scrollLeft;
+    let activeIndex = 0;
+    let minDistance = Infinity;
 
-    const maxScroll = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
-    const index = Math.round(viewport.scrollLeft / step);
-    const maxIndex = cards.length - 1;
+    cards.forEach((_, index) => {
+      const distance = Math.abs(scrollLeft - getCardScrollLeft(index));
+      if (distance < minDistance) {
+        minDistance = distance;
+        activeIndex = index;
+      }
+    });
 
-    if (viewport.scrollLeft >= maxScroll - 2) return maxIndex;
-    return Math.min(maxIndex, Math.max(0, index));
+    return activeIndex;
   }
 
   function updateButtons() {
-    const maxScroll = viewport.scrollWidth - viewport.clientWidth;
+    const maxScroll = getMaxScroll();
     prevBtn.disabled = viewport.scrollLeft <= 2;
     nextBtn.disabled = viewport.scrollLeft >= maxScroll - 2;
   }
@@ -91,11 +96,8 @@
   }
 
   function scrollToIndex(index) {
-    const step = getScrollStep();
-    if (!step) return;
-
-    const maxScroll = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
-    const target = Math.min(Math.max(0, index) * step, maxScroll);
+    const clamped = Math.min(cards.length - 1, Math.max(0, index));
+    const target = Math.min(getCardScrollLeft(clamped), getMaxScroll());
 
     viewport.scrollTo({
       left: target,
